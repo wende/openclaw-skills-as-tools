@@ -467,6 +467,98 @@ async execute(_id, params) {
 
 Throwing an uncaught error from `execute()` also works — the framework catches it and shows the error to the agent. But returning errors as text gives you more control over formatting.
 
+## Slash commands (auto-reply)
+
+A `plugin.ts` can also register slash commands — instant responses that bypass the AI agent entirely. Useful for toggles, status checks, or quick actions.
+
+### Basic command
+
+```ts
+export default function (api) {
+  api.registerCommand({
+    name: "ping",
+    description: "Check if the skill is loaded",
+    handler: () => ({ text: "pong" }),
+  });
+}
+```
+
+Users send `/ping` in any channel and get `pong` back immediately.
+
+### Command with arguments
+
+```ts
+api.registerCommand({
+  name: "translate_set_lang",
+  description: "Set default target language",
+  acceptsArgs: true,
+  handler: (ctx) => {
+    const lang = ctx.args?.trim() || "en";
+    // persist somewhere...
+    return { text: `Default language set to: ${lang}` };
+  },
+});
+```
+
+### Handler context
+
+The `ctx` object provides:
+
+- `senderId` — the sender's ID
+- `channel` — channel name (`"telegram"`, `"discord"`, etc.)
+- `isAuthorizedSender` — whether the sender is on the allowlist
+- `args` — text after the command name (only if `acceptsArgs: true`)
+- `commandBody` — the full command text
+- `config` — current OpenClaw config
+
+### Options
+
+- `name` — command name without leading `/` (letters, numbers, hyphens, underscores)
+- `description` — shown in `/help` and command menus
+- `acceptsArgs` — whether the command takes arguments (default: `false`). If `false` and the user passes args, the command won't match and falls through to the agent
+- `requireAuth` — restrict to authorized senders (default: `true`)
+- `handler` — returns `{ text: string }` (can be async)
+
+### Reserved names
+
+These cannot be overridden: `help`, `status`, `reset`, `new`, and other built-in commands.
+
+### Mixing tools and commands
+
+A single `plugin.ts` can register both:
+
+```ts
+export default function (api) {
+  // Tool: agent calls this during reasoning
+  api.registerTool({
+    name: "weather_lookup",
+    description: "Look up current weather for a city",
+    parameters: {
+      type: "object",
+      properties: {
+        city: { type: "string", description: "City name" },
+      },
+      required: ["city"],
+    },
+    async execute(_id, params) {
+      const data = await fetchWeather(params.city);
+      return { content: [{ type: "text", text: JSON.stringify(data) }] };
+    },
+  });
+
+  // Command: user sends /weather_units and gets instant reply
+  api.registerCommand({
+    name: "weather_units",
+    description: "Toggle temperature units (C/F)",
+    acceptsArgs: true,
+    handler: (ctx) => {
+      const unit = ctx.args?.trim() === "F" ? "F" : "C";
+      return { text: `Temperature units set to ${unit}` };
+    },
+  });
+}
+```
+
 ## Do's and don'ts
 
 ### Do

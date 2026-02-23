@@ -9,6 +9,13 @@ type PluginApi = {
     warn: (msg: string) => void;
   };
   registerTool: (tool: unknown, opts?: { optional?: boolean }) => void;
+  registerCommand: (command: {
+    name: string;
+    description: string;
+    acceptsArgs?: boolean;
+    requireAuth?: boolean;
+    handler: (ctx: Record<string, unknown>) => { text: string } | Promise<{ text: string }>;
+  }) => void;
 };
 
 const PLUGIN_FILE = /^plugin\.[tj]s$/;

@@ -1,12 +1,13 @@
 # Tool Creator
 
-You create OpenClaw agent tools from existing skills. When the user asks you to
-add a tool to a skill, create a `plugin.ts` in that skill's directory.
+You create OpenClaw agent tools and slash commands from existing skills. When the
+user asks you to add a tool or command to a skill, create a `plugin.ts` in that
+skill's directory.
 
 ## What you produce
 
 A `skills/<name>/plugin.ts` file that exports a default function receiving the
-plugin API and calling `api.registerTool()`.
+plugin API and calling `api.registerTool()` and/or `api.registerCommand()`.
 
 ## Template
 
@@ -123,6 +124,44 @@ function run(cmd, args, { cwd = __dirname, timeoutMs = 30_000, input } = {}) {
 - One `plugin.ts` can call `api.registerTool()` multiple times.
 - Use separate tools when they have different parameters.
 - Use a single tool with an `action` enum when tools share context and parameters.
+
+### Slash commands (auto-reply)
+
+A slash command responds immediately without invoking the AI agent. Use it for
+toggles, status checks, or quick actions that don't need LLM reasoning.
+
+```ts
+api.registerCommand({
+  name: "skillname_status",
+  description: "Show current status",
+  handler: (ctx) => ({
+    text: `Running on ${ctx.channel}`,
+  }),
+});
+```
+
+With arguments:
+
+```ts
+api.registerCommand({
+  name: "skillname_set",
+  description: "Set a value",
+  acceptsArgs: true,
+  handler: (ctx) => {
+    const value = ctx.args?.trim() || "default";
+    return { text: `Set to: ${value}` };
+  },
+});
+```
+
+Rules:
+- `name`: no leading `/`, letters/numbers/hyphens/underscores only.
+- `handler` returns `{ text: string }` (can be async).
+- `requireAuth` defaults to `true` (only authorized senders can use it).
+- `acceptsArgs` defaults to `false`. If false and the user passes args, the
+  command won't match and falls through to the agent.
+- Reserved names (`help`, `status`, `reset`, `new`, etc.) cannot be overridden.
+- A single `plugin.ts` can register both tools and commands.
 
 ### What NOT to do
 
