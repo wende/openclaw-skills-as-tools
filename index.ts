@@ -2,6 +2,7 @@ import { readdirSync, existsSync, lstatSync, statSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
 
 type PluginApi = {
+  config?: { agents?: { defaults?: { workspace?: string } } };
   resolvePath: (input: string) => string;
   logger: {
     info: (msg: string) => void;
@@ -48,7 +49,12 @@ function findPluginFiles(dir: string): string[] {
 }
 
 export default async function register(api: PluginApi) {
-  const skillsDir = resolve(api.resolvePath("skills"));
+  // resolvePath uses process.cwd() which may differ from the configured workspace.
+  // Prefer the explicit workspace path from config when available.
+  const workspace = api.config?.agents?.defaults?.workspace;
+  const skillsDir = workspace
+    ? resolve(api.resolvePath(workspace), "skills")
+    : resolve(api.resolvePath("skills"));
 
   if (!existsSync(skillsDir) || !statSync(skillsDir).isDirectory()) {
     api.logger.info("skill-tools: no skills/ directory found, skipping");
