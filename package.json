@@ -1,0 +1,12 @@
+{
+  "name": "openclaw-skills-as-tools",
+  "version": "0.1.0",
+  "description": "Auto-discovers skills/**/plugin.ts and registers them as OpenClaw agent tools",
+  "type": "module",
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  },
+  "devDependencies": {
+    "openclaw": "*"
+  }
+}
