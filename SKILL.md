@@ -133,6 +133,21 @@ function run(cmd, args, { cwd = __dirname, timeoutMs = 30_000, input } = {}) {
 - Don't hardcode absolute paths.
 - Don't return empty content arrays.
 
+## Troubleshooting
+
+If tools fail to load, the loader logs warnings with a `skill-tools:` prefix.
+Search the gateway log:
+
+```bash
+grep "skill-tools:" /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log
+```
+
+Common issues:
+- `has no default/register export` — the plugin.ts doesn't export a default function or named `register` export.
+- `failed to load` — syntax error or missing import. The error message includes the cause.
+- Tool doesn't appear after restart — check `openclaw plugins list` to confirm `openclaw-skills-as-tools` is loaded and enabled.
+- Tool is loaded but agent can't call it — if registered with `{ optional: true }`, add the tool name to `tools.allow` in config.
+
 ## Finding documentation
 
 Skill directories often contain `.md` files that describe what the skill does,
