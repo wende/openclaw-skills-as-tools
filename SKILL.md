@@ -133,11 +133,23 @@ function run(cmd, args, { cwd = __dirname, timeoutMs = 30_000, input } = {}) {
 - Don't hardcode absolute paths.
 - Don't return empty content arrays.
 
+## Finding documentation
+
+Skill directories often contain `.md` files that describe what the skill does,
+how it works, and what tools/scripts are available. Before writing a tool:
+
+- Read **all `.md` files** in the skill directory (`skills/<name>/*.md`).
+  Common files: `SKILL.md` (skill prompt), `TOOLS.md` (tool usage), `README.md`.
+- If the tool description alone is not enough to understand behavior or expected
+  inputs/outputs, check these docs first — they are the source of truth.
+- When writing tool descriptions, reference the skill's docs if relevant:
+  e.g. `"Run the analysis pipeline described in skills/data-analysis/TOOLS.md"`.
+
 ## Workflow
 
 When asked to create a tool for an existing skill:
 
-1. Read the skill's `SKILL.md` to understand what it does.
+1. Read **all `.md` files** in the skill directory to understand what it does.
 2. Identify what actions should become tool calls (look for verbs: search, create, run, analyze).
 3. Design parameters — what inputs does the agent need to provide?
 4. Write `plugin.ts` in the skill directory.
