@@ -7,7 +7,7 @@ Auto-discovers `skills/**/plugin.ts` files in your workspace and registers them 
 Clone into your workspace's extensions directory:
 
 ```bash
-git clone https://github.com/youruser/openclaw-skills-as-tools .openclaw/extensions/skill-tools
+git clone https://github.com/youruser/openclaw-skills-as-tools .openclaw/extensions/openclaw-skills-as-tools
 ```
 
 OpenClaw auto-discovers `.openclaw/extensions/*/index.ts` — no config changes needed.

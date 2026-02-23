@@ -135,11 +135,11 @@ function run(cmd, args, { cwd = __dirname, timeoutMs = 30_000, input } = {}) {
 
 ## Troubleshooting
 
-If tools fail to load, the loader logs warnings with a `skill-tools:` prefix.
+If tools fail to load, the loader logs warnings with a `openclaw-skills-as-tools:` prefix.
 Search the gateway log:
 
 ```bash
-grep "skill-tools:" /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log
+grep "openclaw-skills-as-tools:" /tmp/openclaw/openclaw-$(date +%Y-%m-%d).log
 ```
 
 Common issues:

@@ -398,7 +398,7 @@ The `api` object gives you access to config and logging:
 
 ```ts
 export default function (api) {
-  // Read plugin config (from plugins.entries.skill-tools.config)
+  // Read plugin config (from plugins.entries.openclaw-skills-as-tools.config)
   const myConfig = api.pluginConfig;
 
   // Log messages (visible in gateway logs)

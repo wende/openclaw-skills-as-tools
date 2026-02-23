@@ -57,14 +57,14 @@ export default async function register(api: PluginApi) {
     : resolve(api.resolvePath("skills"));
 
   if (!existsSync(skillsDir) || !statSync(skillsDir).isDirectory()) {
-    api.logger.info("skill-tools: no skills/ directory found, skipping");
+    api.logger.info("openclaw-skills-as-tools: no skills/ directory found, skipping");
     return;
   }
 
   const pluginFiles = findPluginFiles(skillsDir);
 
   if (pluginFiles.length === 0) {
-    api.logger.info("skill-tools: no plugin files found in skills/");
+    api.logger.info("openclaw-skills-as-tools: no plugin files found in skills/");
     return;
   }
 
@@ -78,14 +78,14 @@ export default async function register(api: PluginApi) {
       if (typeof fn === "function") {
         await fn(api);
         loaded++;
-        api.logger.info(`skill-tools: loaded skills/${rel}`);
+        api.logger.info(`openclaw-skills-as-tools: loaded skills/${rel}`);
       } else {
-        api.logger.warn(`skill-tools: skills/${rel} has no default/register export, skipping`);
+        api.logger.warn(`openclaw-skills-as-tools: skills/${rel} has no default/register export, skipping`);
       }
     } catch (err) {
-      api.logger.warn(`skill-tools: failed to load skills/${rel} — ${err}`);
+      api.logger.warn(`openclaw-skills-as-tools: failed to load skills/${rel} — ${err}`);
     }
   }
 
-  api.logger.info(`skill-tools: registered ${loaded}/${pluginFiles.length} skill tool(s)`);
+  api.logger.info(`openclaw-skills-as-tools: registered ${loaded}/${pluginFiles.length} skill tool(s)`);
 }
